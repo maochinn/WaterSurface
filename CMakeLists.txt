@@ -5,8 +5,16 @@ set(SRC_DIR ${PROJECT_SOURCE_DIR}/src/)
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/)
 set(LIB_DIR ${PROJECT_SOURCE_DIR}/lib/)
 
+set(SRC_SHADER 
+    ${SRC_DIR}shaders/simple.vert
+    ${SRC_DIR}shaders/simple.frag)
+
+set(SRC_RENDER_UTILITIES
+    ${SRC_DIR}RenderUtilities/BufferObject.h
+    ${SRC_DIR}RenderUtilities/Shader.h
+    ${SRC_DIR}RenderUtilities/Texture.h)
+
 include_directories(${INCLUDE_DIR})
-include_directories(${SRC_DIR})
 include_directories(${INCLUDE_DIR}glad4.6/include/)
 include_directories(${INCLUDE_DIR}glm-0.9.8.5/glm/)
 
@@ -27,19 +35,21 @@ add_executable(WaterSurface
     ${SRC_DIR}TrainView.cpp
     ${SRC_DIR}TrainWindow.cpp
 
-    ${SRC_DIR}RenderUtilities/BufferObject.h
-    ${SRC_DIR}RenderUtilities/Shader.h
-    ${SRC_DIR}RenderUtilities/Texture.h
-    
+    ${SRC_SHADER}
+    ${SRC_RENDER_UTILITIES}
+
     ${INCLUDE_DIR}glad4.6/src/glad.c
 )
+source_group("shaders" FILES ${SRC_SHADER})
+source_group("RenderUtilities" FILES ${SRC_RENDER_UTILITIES})
+
 
 add_library(Utilities 
-    ${SRC_DIR}Utilities/3DUtils.h
     ${SRC_DIR}Utilities/ArcBallCam.h
+    ${SRC_DIR}Utilities/3DUtils.h
     ${SRC_DIR}Utilities/Pnt3f.h
-    ${SRC_DIR}Utilities/3DUtils.cpp
     ${SRC_DIR}Utilities/ArcBallCam.cpp
+    ${SRC_DIR}Utilities/3DUtils.cpp
     ${SRC_DIR}Utilities/Pnt3f.cpp)
 
 target_link_libraries(WaterSurface debug 
