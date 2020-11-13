@@ -33,7 +33,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
-#include "GL/glu.h"
+#include <GL/glu.h>
 
 #include "TrainView.H"
 #include "TrainWindow.H"
@@ -261,6 +261,64 @@ void TrainView::draw()
 
 		if (!this->texture)
 			this->texture = new Texture2D("../WaterSurface/Images/church.png");
+
+		if (!this->device){
+			//Tutorial: https://ffainelli.github.io/openal-example/
+			this->device = alcOpenDevice(NULL);
+			if (!this->device)
+				puts("ERROR::NO_AUDIO_DEVICE");
+
+			ALboolean enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
+			if (enumeration == AL_FALSE)
+				puts("Enumeration not supported");
+			else
+				puts("Enumeration supported");
+
+			this->context = alcCreateContext(this->device, NULL);
+			if (!alcMakeContextCurrent(context))
+				puts("Failed to make context current");
+
+			this->source_pos = glm::vec3(0.0f, 5.0f, 0.0f);
+
+			ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+			alListener3f(AL_POSITION, source_pos.x, source_pos.y, source_pos.z);
+			alListener3f(AL_VELOCITY, 0, 0, 0);
+			alListenerfv(AL_ORIENTATION, listenerOri);
+
+			alGenSources((ALuint)1, &this->source);
+			alSourcef(this->source, AL_PITCH, 1);
+			alSourcef(this->source, AL_GAIN, 1.0f);
+			alSource3f(this->source, AL_POSITION, source_pos.x, source_pos.y, source_pos.z);
+			alSource3f(this->source, AL_VELOCITY, 0, 0, 0);
+			alSourcei(this->source, AL_LOOPING, AL_TRUE);
+
+			alGenBuffers((ALuint)1, &this->buffer);
+
+			ALsizei size, freq;
+			ALenum format;
+			ALvoid* data;
+			ALboolean loop = AL_TRUE;
+
+			//Material from: ThinMatrix
+			alutLoadWAVFile((ALbyte*)"../WaterSurface/Audios/bounce.wav", &format, &data, &size, &freq, &loop);
+			alBufferData(this->buffer, format, data, size, freq);
+			alSourcei(this->source, AL_BUFFER, this->buffer);
+
+			if (format == AL_FORMAT_STEREO16 || format == AL_FORMAT_STEREO8)
+				puts("TYPE::STEREO");
+			else if (format == AL_FORMAT_MONO16 || format == AL_FORMAT_MONO8)
+				puts("TYPE::MONO");
+
+			alSourcePlay(this->source);
+
+			// cleanup context
+			//alDeleteSources(1, &source);
+			//alDeleteBuffers(1, &buffer);
+			//device = alcGetContextsDevice(context);
+			//alcMakeContextCurrent(NULL);
+			//alcDestroyContext(context);
+			//alcCloseDevice(device);
+		}
 	}
 	else
 		throw std::runtime_error("Could not initialize GLAD!");
@@ -328,6 +386,17 @@ void TrainView::draw()
 	glLightfv(GL_LIGHT2, GL_POSITION, lightPosition3);
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, blueLight);
 
+	// set linstener position 
+	if(selectedCube >= 0)
+		alListener3f(AL_POSITION, 
+			m_pTrack->points[selectedCube].pos.x,
+			m_pTrack->points[selectedCube].pos.y,
+			m_pTrack->points[selectedCube].pos.z);
+	else
+		alListener3f(AL_POSITION, 
+			this->source_pos.x, 
+			this->source_pos.y,
+			this->source_pos.z);
 
 
 	//*********************************************************************
@@ -365,7 +434,7 @@ void TrainView::draw()
 	this->shader->Use();
 
 	glm::mat4 model_matrix = glm::mat4();
-	model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 5.0f, 0.0f));
+	model_matrix = glm::translate(model_matrix, this->source_pos);
 	model_matrix = glm::scale(model_matrix, glm::vec3(10.0f, 10.0f, 10.0f));
 	glUniformMatrix4fv(glGetUniformLocation(this->shader->Program, "u_model"), 1, GL_FALSE, &model_matrix[0][0]);
 	glUniform3fv(glGetUniformLocation(this->shader->Program, "u_color"), 1, &glm::vec3(0.0f, 1.0f, 0.0f)[0]);

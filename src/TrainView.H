@@ -52,6 +52,10 @@ class CTrack;
 #include <Fl/Fl_Gl_Window.h>
 #pragma warning(pop)
 
+#include <AL/alut.h>
+//#include <AL/al.h>
+//#include <AL/alc.h>
+
 // this uses the old ArcBall Code
 #include "Utilities/ArcBallCam.H"
 
@@ -93,4 +97,14 @@ class TrainView : public Fl_Gl_Window
 		Texture2D* texture	= nullptr;
 		VAO* plane			= nullptr;
 		UBO* commom_matrices= nullptr;
+
+		//OpenAL
+		glm::vec3 source_pos;
+		glm::vec3 listener_pos;
+		ALCdevice* device	= nullptr;
+		ALCcontext* context = nullptr;
+		ALuint source;
+		ALuint buffer;
+
+
 };

@@ -64,7 +64,12 @@ target_link_libraries(WaterSurface
 
 target_link_libraries(WaterSurface 
     ${LIB_DIR}OpenGL32.lib
-    ${LIB_DIR}glu32.lib)
+    ${LIB_DIR}glu32.lib
+    ${LIB_DIR}common.lib
+    ${LIB_DIR}ex-common.lib
+    ${LIB_DIR}OpenAL32.lib
+    ${LIB_DIR}alut.lib
+    ${LIB_DIR}alut_static.lib)
 
 target_link_libraries(WaterSurface Utilities)
     
