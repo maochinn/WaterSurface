@@ -19,6 +19,7 @@ include_directories(${INCLUDE_DIR}glad4.6/include/)
 include_directories(${INCLUDE_DIR}glm-0.9.8.5/glm/)
 
 add_Definitions("-D_XKEYCHECK_H")
+add_definitions(-DPROJECT_DIR="${PROJECT_SOURCE_DIR}")
 
 add_executable(WaterSurface
     ${SRC_DIR}CallBacks.h

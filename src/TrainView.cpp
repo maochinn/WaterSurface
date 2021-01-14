@@ -189,13 +189,13 @@ void TrainView::draw()
 	if (gladLoadGL())
 	{
 		//initiailize VAO, VBO, Shader...
-
+		
 		if (!this->shader)
 			this->shader = new
 			Shader(
-				"../WaterSurface/src/shaders/simple.vert", 
+				PROJECT_DIR "/src/shaders/simple.vert",
 				nullptr, nullptr, nullptr, 
-				"../WaterSurface/src/shaders/simple.frag");
+				PROJECT_DIR "/src/shaders/simple.frag");
 
 		if (!this->commom_matrices)
 			this->commom_matrices = new UBO();
@@ -260,7 +260,7 @@ void TrainView::draw()
 		}
 
 		if (!this->texture)
-			this->texture = new Texture2D("../WaterSurface/Images/church.png");
+			this->texture = new Texture2D(PROJECT_DIR "/Images/church.png");
 
 		if (!this->device){
 			//Tutorial: https://ffainelli.github.io/openal-example/
@@ -300,7 +300,7 @@ void TrainView::draw()
 			ALboolean loop = AL_TRUE;
 
 			//Material from: ThinMatrix
-			alutLoadWAVFile((ALbyte*)"../WaterSurface/Audios/bounce.wav", &format, &data, &size, &freq, &loop);
+			alutLoadWAVFile((ALbyte*)PROJECT_DIR "/Audios/bounce.wav", &format, &data, &size, &freq, &loop);
 			alBufferData(this->buffer, format, data, size, freq);
 			alSourcei(this->source, AL_BUFFER, this->buffer);
 
@@ -436,8 +436,12 @@ void TrainView::draw()
 	glm::mat4 model_matrix = glm::mat4();
 	model_matrix = glm::translate(model_matrix, this->source_pos);
 	model_matrix = glm::scale(model_matrix, glm::vec3(10.0f, 10.0f, 10.0f));
-	glUniformMatrix4fv(glGetUniformLocation(this->shader->Program, "u_model"), 1, GL_FALSE, &model_matrix[0][0]);
-	glUniform3fv(glGetUniformLocation(this->shader->Program, "u_color"), 1, &glm::vec3(0.0f, 1.0f, 0.0f)[0]);
+	glUniformMatrix4fv(
+		glGetUniformLocation(this->shader->Program, "u_model"), 1, GL_FALSE, &model_matrix[0][0]);
+	glUniform3fv(
+		glGetUniformLocation(this->shader->Program, "u_color"), 
+		1, 
+		&glm::vec3(0.0f, 1.0f, 0.0f)[0]);
 	this->texture->bind(0);
 	glUniform1i(glGetUniformLocation(this->shader->Program, "u_texture"), 0);
 	
