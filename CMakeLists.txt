@@ -73,4 +73,11 @@ target_link_libraries(WaterSurface
     ${LIB_DIR}alut_static.lib)
 
 target_link_libraries(WaterSurface Utilities)
+
+file(COPY 
+    ${LIB_DIR}dll/alut.dll
+    ${LIB_DIR}dll/OpenAL32.dll
+    ${LIB_DIR}dll/opencv_world341.dll
+    ${LIB_DIR}dll/opencv_world341d.dll
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     

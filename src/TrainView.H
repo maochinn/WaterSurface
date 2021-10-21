@@ -88,7 +88,7 @@ class TrainView : public Fl_Gl_Window
 		void setUBO();
 	public:
 		ArcBallCam		arcball;			// keep an ArcBall for the UI
-		int				selectedCube;  // simple - just remember which cube is selected
+		int				selectedCube = -1;  // simple - just remember which cube is selected
 
 		TrainWindow*	tw;				// The parent of this display window
 		CTrack*			m_pTrack;		// The track of the entire scene
